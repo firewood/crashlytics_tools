@@ -6,6 +6,7 @@
   "author": "firewood <firewood@users.noreply.github.com>",
   "license": "MIT",
   "dependencies": {
+    "jsonfile": "^6.0.1",
     "puppeteer": "^5.3.1"
   }
 }
