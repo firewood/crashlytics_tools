@@ -56,6 +56,16 @@ async function login() {
   return true;
 }
 
+async function waitForElement(page, selector) {
+  var found = false;
+  while (!found) {
+    await page.waitForTimeout(100);
+    found = await page.$(selector).then(res => !!res);
+  }
+  await page.waitForTimeout(500);
+  return true;
+}
+
 async function main() {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
@@ -74,7 +84,7 @@ async function main() {
   });
 */
 
-  await page.setViewport({ width: 512, height: 1024 });
+  await page.setViewport({ width: 900, height: 2900 });
   await page.goto(service_url, {waitUntil: "domcontentloaded"});
 
   if (service_url.split('/')[2] != page.url().split('/')[2]) {
@@ -83,9 +93,25 @@ async function main() {
   }
 
   console.log("Waiting for the page is loaded...");
-  await page.waitForTimeout(10000);
+  await waitForElement(page, '#mat-chip-list-0');
 
+  console.log("Showing the version popup...");
+  await page.click("#mat-chip-list-0 > div > mat-chip");
+  await waitForElement(page, '.mat-menu-panel');
+
+  console.log("Applying the new version filter...");
+  await page.click(".mat-menu-panel mat-checkbox:first-child");
+  await page.click(".add-filter-btn");
+
+  // Hide the dSYM warning
+  page.$eval('.c9s-missing-dsym-banner', (elem) => {
+    elem.style.display = 'none';
+  });
+
+  console.log("Waiting for the page is loaded...");
+  await page.waitForTimeout(10000);
   await page.screenshot({ path: PATH });
+  console.log("DONE.");
 
   await browser.close();
   return true;
