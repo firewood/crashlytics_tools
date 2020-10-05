@@ -1,11 +1,12 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const jsonfile = require('jsonfile')
+const dateformat = require('dateformat');
 
 const config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
 const cookiesFilePath = './cookies.json';
 const service_url = config['url'] + '?state=open&type=crash&time=last-seven-days';
-const PATH = 'temp.png';
+const FILENAME = './yyyy-mm-dd.png';
 const email = config['email'];
 const USERNAME_SELECTOR = '#identifierId';
 
@@ -110,7 +111,8 @@ async function main() {
 
   console.log("Waiting for the page is loaded...");
   await page.waitForTimeout(10000);
-  await page.screenshot({ path: PATH });
+  const filename = dateformat(new Date(), FILENAME);
+  await page.screenshot({ path: filename });
   console.log("DONE.");
 
   await browser.close();
