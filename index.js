@@ -68,7 +68,8 @@ async function waitForElement(page, selector) {
 }
 
 async function main() {
-  const browser = await puppeteer.launch();
+//  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
   try {
     const cookies = jsonfile.readFileSync(cookiesFilePath);
@@ -101,13 +102,17 @@ async function main() {
   await waitForElement(page, '.mat-menu-panel');
 
   console.log("Applying the new version filter...");
-  await page.click(".mat-menu-panel mat-checkbox:first-child");
+  await page.click(".mat-menu-panel .keys-list mat-checkbox:first-child label");
   await page.click(".add-filter-btn");
 
   // Hide the dSYM warning
-  page.$eval('.c9s-missing-dsym-banner', (elem) => {
-    elem.style.display = 'none';
+  const x = await page.evaluate(() => {
+    let elem = document.querySelector('c9s-missing-dsym-banner');
+    if (elem) {
+      elem.style.display = 'none';
+    }
   });
+
 
   console.log("Waiting for the page is loaded...");
   await page.waitForTimeout(10000);
