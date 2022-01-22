@@ -95,10 +95,10 @@ async function main() {
   }
 
   console.log("Waiting for the page is loaded...");
-  await waitForElement(page, '#mat-chip-list-0');
+  await waitForElement(page, 'div.filter-chips-row');
 
   console.log("Showing the version popup...");
-  await page.click("#mat-chip-list-0 > div > mat-chip");
+  await page.click('div.filter-chips-row > div > div > mat-chip');
   await waitForElement(page, '.mat-menu-panel');
 
   console.log("Applying the new version filter...");
